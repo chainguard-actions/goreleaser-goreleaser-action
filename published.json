@@ -1,0 +1,4 @@
+{
+  "upstream": "goreleaser/goreleaser-action",
+  "version": "v7.0.0"
+}
