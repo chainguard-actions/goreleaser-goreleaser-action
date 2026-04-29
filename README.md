@@ -1,6 +1,12 @@
 # goreleaser/goreleaser-action
 
-Hardened GitHub Action by [Chainguard](https://www.chainguard.dev).
+Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/goreleaser/goreleaser-action](https://github.com/goreleaser/goreleaser-action).
+
+## Versions
+
+| Version | Tag | Upstream commit |
+|---------|-----|-----------------|
+| v7.0.0 | [`v7.0.0`](https://github.com/chainguard-actions/goreleaser-action/tree/v7.0.0) | — |
 
 ## Privacy
 
