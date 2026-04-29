@@ -1,5 +1,7 @@
 # goreleaser/goreleaser-action
 
+GitHub Action for GoReleaser
+
 Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/goreleaser/goreleaser-action](https://github.com/goreleaser/goreleaser-action).
 
 ## Versions

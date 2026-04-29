@@ -1,5 +1,6 @@
 {
   "owner": "goreleaser",
   "name": "goreleaser-action",
-  "visibility": ""
+  "visibility": "internal",
+  "description": "GitHub Action for GoReleaser"
 }
