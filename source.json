@@ -1,4 +1,6 @@
 {
-  "upstream": "goreleaser/goreleaser-action",
-  "version": "v7.0.0"
+  "owner": "goreleaser",
+  "repo": "goreleaser-action",
+  "version": "",
+  "url": "https://github.com/goreleaser/goreleaser-action"
 }
