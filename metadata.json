@@ -1,7 +1,0 @@
-{
-  "owner": "goreleaser",
-  "name": "goreleaser-action",
-  "visibility": "internal",
-  "description": "GitHub Action for GoReleaser",
-  "block_publish": false
-}
