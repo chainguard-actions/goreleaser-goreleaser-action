@@ -1,0 +1,24 @@
+name: Test version-file input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          version-file: '.tool-versions'
+          workdir: 'actions/hardened/goreleaser--goreleaser-action/v7.2.2/tests/fixtures/tool-versions'
+          install-only: 'true'
+      - name: Assert goreleaser is installed from version-file
+        run: |
+          which goreleaser || { echo "FAIL: goreleaser not found in PATH"; exit 1; }
+          VERSION=$(goreleaser --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          echo "Installed goreleaser version: $VERSION"
+          if [ "$VERSION" != "2.9.0" ]; then
+            echo "FAIL: expected version 2.9.0, got $VERSION"
+            exit 1
+          fi
+          echo "PASS"
