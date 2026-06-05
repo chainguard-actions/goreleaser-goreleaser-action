@@ -1,6 +1,6 @@
 # goreleaser/goreleaser-action
 
-GitHub Action for GoReleaser
+GitHub Action for GoReleaser, a release automation tool for Go projects
 
 Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/goreleaser/goreleaser-action](https://github.com/goreleaser/goreleaser-action).
 
@@ -9,6 +9,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
 | v7.0.0 | [`v7.0.0`](https://github.com/chainguard-actions/goreleaser-goreleaser-action/tree/v7.0.0) | — |
+| v7.2.2 | [`v7.2.2`](https://github.com/chainguard-actions/goreleaser-goreleaser-action/tree/v7.2.2) | [`5daf1e9`](https://github.com/goreleaser/goreleaser-action/commit/5daf1e915a5f0af01ddbcd89a43b8061ff4f1a89) |
 
 ## Privacy
 
