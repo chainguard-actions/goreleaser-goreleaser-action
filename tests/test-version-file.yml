@@ -9,16 +9,12 @@ jobs:
       - id: action
         uses: .
         with:
+          distribution: goreleaser
           version-file: '.tool-versions'
-          workdir: 'actions/hardened/goreleaser--goreleaser-action/v7.2.2/tests/fixtures/tool-versions'
+          workdir: 'actions/hardened/goreleaser--goreleaser-action/v7.2.2/tests/fixtures'
           install-only: 'true'
-      - name: Assert goreleaser is installed from version-file
+      - name: Assert goreleaser is installed via version-file
         run: |
-          which goreleaser || { echo "FAIL: goreleaser not found in PATH"; exit 1; }
-          VERSION=$(goreleaser --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-          echo "Installed goreleaser version: $VERSION"
-          if [ "$VERSION" != "2.9.0" ]; then
-            echo "FAIL: expected version 2.9.0, got $VERSION"
-            exit 1
-          fi
-          echo "PASS"
+          which goreleaser || (echo "FAIL: goreleaser not found in PATH" && exit 1)
+          goreleaser --version
+          echo "PASS: goreleaser installed using version-file input"

@@ -9,9 +9,11 @@ jobs:
       - id: action
         uses: .
         with:
+          distribution: goreleaser
+          version: '~> v2'
           install-only: 'true'
       - name: Assert goreleaser is installed
         run: |
-          which goreleaser || { echo "FAIL: goreleaser not found in PATH"; exit 1; }
+          which goreleaser || (echo "FAIL: goreleaser not found in PATH" && exit 1)
           goreleaser --version
-          echo "PASS"
+          echo "PASS: goreleaser is installed"

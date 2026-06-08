@@ -9,7 +9,12 @@ jobs:
       - id: action
         uses: .
         with:
+          distribution: goreleaser
+          version: '~> v2'
+          install-only: 'true'
           args: '--version'
-      - name: Assert action completed with args
+      - name: Assert goreleaser is installed when args is provided
         run: |
-          echo "PASS: action completed successfully with args='--version'"
+          which goreleaser || (echo "FAIL: goreleaser not found in PATH" && exit 1)
+          goreleaser --version
+          echo "PASS: goreleaser installed with args input provided"
