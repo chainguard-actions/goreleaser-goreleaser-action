@@ -9,12 +9,11 @@ jobs:
       - id: action
         uses: .
         with:
-          distribution: goreleaser
           version-file: '.tool-versions'
           workdir: 'actions/hardened/goreleaser--goreleaser-action/v7.2.2/tests/fixtures'
           install-only: 'true'
-      - name: Assert goreleaser is installed via version-file
+      - name: Assert goreleaser is installed from version-file
         run: |
-          which goreleaser || (echo "FAIL: goreleaser not found in PATH" && exit 1)
+          which goreleaser
           goreleaser --version
           echo "PASS: goreleaser installed using version-file input"
