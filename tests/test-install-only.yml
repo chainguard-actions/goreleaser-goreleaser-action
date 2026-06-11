@@ -1,0 +1,23 @@
+name: Test install-only
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          install-only: 'true'
+      - name: Assert goreleaser is installed
+        run: |
+          echo "Checking goreleaser binary is available..."
+          if ! command -v goreleaser &>/dev/null; then
+            echo "FAIL: goreleaser binary not found in PATH"
+            exit 1
+          fi
+          echo "goreleaser version: $(goreleaser --version)"
+          echo "PASS"
