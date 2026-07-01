@@ -1,0 +1,40 @@
+name: Test version-file input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set up .tool-versions file in workdir
+        run: |
+          cp "$GITHUB_WORKSPACE/actions/hardened/goreleaser--goreleaser-action/v7.2.3/tests/fixtures/tool-versions/.tool-versions" \
+             "$GITHUB_WORKSPACE/.tool-versions"
+      - id: action
+        uses: .
+        with:
+          version-file: '.tool-versions'
+          install-only: 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Assert goreleaser installed from version-file
+        run: |
+          echo "Checking goreleaser installed via version-file..."
+          GORELEASER_BIN=$(which goreleaser 2>/dev/null || true)
+          if [ -z "$GORELEASER_BIN" ]; then
+            GORELEASER_BIN=$(find /opt/hostedtoolcache /root/.cache /tmp -name goreleaser -type f 2>/dev/null | head -1 || true)
+          fi
+          if [ -z "$GORELEASER_BIN" ]; then
+            echo "FAIL: goreleaser not found after action ran with version-file"
+            exit 1
+          fi
+          echo "goreleaser found at: $GORELEASER_BIN"
+          VERSION_OUTPUT=$("$GORELEASER_BIN" --version 2>&1 || true)
+          echo "Version output: $VERSION_OUTPUT"
+          # Verify it's a v2.x release matching the .tool-versions file
+          if echo "$VERSION_OUTPUT" | grep -qiE '2\.[0-9]+\.[0-9]+'; then
+            echo "PASS: goreleaser v2.x installed via version-file"
+          else
+            echo "FAIL: expected goreleaser v2.x from version-file, got: $VERSION_OUTPUT"
+            exit 1
+          fi

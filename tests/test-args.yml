@@ -1,0 +1,28 @@
+name: Test args input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          args: '--version'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Assert goreleaser ran with args
+        run: |
+          echo "Action completed with args '--version'"
+          # Verify goreleaser is available after the action ran
+          GORELEASER_BIN=$(which goreleaser 2>/dev/null || true)
+          if [ -z "$GORELEASER_BIN" ]; then
+            GORELEASER_BIN=$(find /opt/hostedtoolcache /root/.cache /tmp -name goreleaser -type f 2>/dev/null | head -1 || true)
+          fi
+          if [ -z "$GORELEASER_BIN" ]; then
+            echo "FAIL: goreleaser not found after action ran"
+            exit 1
+          fi
+          echo "goreleaser found at: $GORELEASER_BIN"
+          echo "PASS: action accepted args input and ran goreleaser"

@@ -1,0 +1,36 @@
+name: Test install-only mode
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          install-only: 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Assert goreleaser is installed
+        run: |
+          echo "PATH: $PATH"
+          echo "Checking goreleaser is available in PATH..."
+          GORELEASER_PATH=$(which goreleaser 2>/dev/null || true)
+          echo "goreleaser path: $GORELEASER_PATH"
+          if [ -z "$GORELEASER_PATH" ]; then
+            echo "goreleaser not in PATH, searching tool cache..."
+            FOUND=$(find /opt/hostedtoolcache /root/.cache /tmp -name goreleaser -type f 2>/dev/null | head -1 || true)
+            if [ -n "$FOUND" ]; then
+              echo "Found goreleaser at: $FOUND"
+              "$FOUND" --version
+              echo "PASS: goreleaser found (not in PATH but installed)"
+            else
+              echo "FAIL: goreleaser not found anywhere"
+              exit 1
+            fi
+          else
+            echo "goreleaser found at: $GORELEASER_PATH"
+            goreleaser --version
+            echo "PASS"
+          fi
