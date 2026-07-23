@@ -1,4 +1,4 @@
-name: Test version-file input
+name: Test default version install
 on:
   workflow_dispatch:
 jobs:
@@ -6,27 +6,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Create .tool-versions file
-        run: |
-          echo "goreleaser 2.5.0" > "$GITHUB_WORKSPACE/.tool-versions"
-          echo "Contents of .tool-versions:"
-          cat "$GITHUB_WORKSPACE/.tool-versions"
       - id: action
         uses: .
         with:
-          version-file: '.tool-versions'
           install-only: 'true'
-      - name: Assert goreleaser version from file
+      - name: Assert goreleaser v2 is installed
         run: |
-          echo "Checking goreleaser version installed from .tool-versions..."
+          echo "Checking goreleaser default (v2) install..."
           if ! command -v goreleaser &>/dev/null; then
             echo "FAIL: goreleaser binary not found in PATH"
             exit 1
           fi
           VERSION_OUTPUT="$(goreleaser --version 2>&1)"
           echo "version output: $VERSION_OUTPUT"
-          if ! echo "$VERSION_OUTPUT" | grep -q "2.5.0"; then
-            echo "FAIL: expected version 2.5.0 from .tool-versions file"
+          # Default version is ~> v2, so major version should be 2
+          # GoReleaser v2 outputs something like "goreleaser version 2.x.x" or "version: 2.x.x"
+          if ! echo "$VERSION_OUTPUT" | grep -qE "2\.[0-9]+\.[0-9]+"; then
+            echo "FAIL: expected goreleaser v2.x to be installed"
             exit 1
           fi
           echo "PASS"

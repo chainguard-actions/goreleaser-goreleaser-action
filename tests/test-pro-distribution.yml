@@ -1,0 +1,31 @@
+name: Test goreleaser-pro distribution install
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          distribution: 'goreleaser-pro'
+          install-only: 'true'
+      - name: Assert goreleaser-pro is installed
+        run: |
+          echo "Checking goreleaser-pro binary..."
+          if ! command -v goreleaser &>/dev/null; then
+            echo "FAIL: goreleaser binary not found in PATH"
+            exit 1
+          fi
+          GORELEASER_BIN="$(command -v goreleaser)"
+          echo "goreleaser found at: $GORELEASER_BIN"
+          # Run version and capture output (may include license warning without GORELEASER_KEY)
+          VERSION_OUTPUT="$(goreleaser --version 2>&1 || true)"
+          echo "version output: $VERSION_OUTPUT"
+          # Verify a version number is present (2.x.x format)
+          if ! echo "$VERSION_OUTPUT" | grep -qE "[0-9]+\.[0-9]+\.[0-9]+"; then
+            echo "FAIL: expected a version number in goreleaser output"
+            exit 1
+          fi
+          echo "PASS: goreleaser-pro binary installed successfully"

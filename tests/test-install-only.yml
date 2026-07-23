@@ -1,4 +1,4 @@
-name: Test install-only mode
+name: Test install-only
 on:
   workflow_dispatch:
 jobs:
@@ -10,27 +10,15 @@ jobs:
         uses: .
         with:
           install-only: 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Assert goreleaser is installed
         run: |
+          echo "Checking goreleaser binary..."
+          # The action uses core.addPath which sets PATH for subsequent steps
           echo "PATH: $PATH"
-          echo "Checking goreleaser is available in PATH..."
-          GORELEASER_PATH=$(which goreleaser 2>/dev/null || true)
-          echo "goreleaser path: $GORELEASER_PATH"
-          if [ -z "$GORELEASER_PATH" ]; then
-            echo "goreleaser not in PATH, searching tool cache..."
-            FOUND=$(find /opt/hostedtoolcache /root/.cache /tmp -name goreleaser -type f 2>/dev/null | head -1 || true)
-            if [ -n "$FOUND" ]; then
-              echo "Found goreleaser at: $FOUND"
-              "$FOUND" --version
-              echo "PASS: goreleaser found (not in PATH but installed)"
-            else
-              echo "FAIL: goreleaser not found anywhere"
-              exit 1
-            fi
-          else
-            echo "goreleaser found at: $GORELEASER_PATH"
-            goreleaser --version
-            echo "PASS"
+          if ! command -v goreleaser &>/dev/null; then
+            echo "FAIL: goreleaser binary not found in PATH"
+            exit 1
           fi
+          echo "goreleaser found at: $(command -v goreleaser)"
+          goreleaser --version 2>&1 || true
+          echo "PASS"
