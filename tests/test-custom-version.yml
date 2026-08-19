@@ -1,0 +1,27 @@
+name: Test custom version installation
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          version: 'v2.3.2'
+          install-only: 'true'
+      - name: Assert goreleaser version matches
+        run: |
+          echo "Checking goreleaser version..."
+          if ! command -v goreleaser &>/dev/null; then
+            echo "FAIL: goreleaser binary not found in PATH"
+            exit 1
+          fi
+          VERSION_OUTPUT=$(goreleaser --version 2>&1)
+          echo "Version output: $VERSION_OUTPUT"
+          if ! echo "$VERSION_OUTPUT" | grep -q "2.3.2"; then
+            echo "FAIL: expected version 2.3.2 in output"
+            exit 1
+          fi
+          echo "PASS"

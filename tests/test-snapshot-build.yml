@@ -1,0 +1,45 @@
+name: Test snapshot build with goreleaser
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set up Go
+        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version: '1.22'
+      - name: Verify fixture files exist
+        run: |
+          echo "Checking fixture files..."
+          ls -la "$GITHUB_WORKSPACE/tests/fixtures/goproject/"
+          cat "$GITHUB_WORKSPACE/tests/fixtures/goproject/.goreleaser.yaml"
+          cat "$GITHUB_WORKSPACE/tests/fixtures/goproject/go.mod"
+      - id: action
+        uses: .
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: release --snapshot --clean
+          workdir: tests/fixtures/goproject
+      - name: Assert artifacts output is set
+        env:
+          ARTIFACTS: ${{ steps.action.outputs.artifacts }}
+        run: |
+          echo "artifacts: $ARTIFACTS"
+          if [ -z "$ARTIFACTS" ]; then
+            echo "FAIL: artifacts output is empty"
+            exit 1
+          fi
+          echo "PASS: artifacts output is set"
+      - name: Assert metadata output is set
+        env:
+          METADATA: ${{ steps.action.outputs.metadata }}
+        run: |
+          echo "metadata: $METADATA"
+          if [ -z "$METADATA" ]; then
+            echo "FAIL: metadata output is empty"
+            exit 1
+          fi
+          echo "PASS: metadata output is set"

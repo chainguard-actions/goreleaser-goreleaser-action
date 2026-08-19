@@ -1,0 +1,26 @@
+name: Test error when args missing and install-only false
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          install-only: 'false'
+          # args intentionally omitted — action should fail with "args input required"
+        continue-on-error: true
+      - name: Assert action failed as expected
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" != "failure" ]; then
+            echo "FAIL: expected action to fail when args is missing and install-only is false, but got outcome=$OUTCOME"
+            exit 1
+          fi
+          echo "PASS: action correctly failed when args was not provided"
