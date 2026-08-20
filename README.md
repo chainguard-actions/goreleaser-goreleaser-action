@@ -8,7 +8,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
-| v7.0.0 | [`v7.0.0`](https://github.com/chainguard-actions/goreleaser-goreleaser-action/tree/v7.0.0) | — |
+| v7.0.0 | [`v7.0.0`](https://github.com/chainguard-actions/goreleaser-goreleaser-action/tree/v7.0.0) | [`ec59f47`](https://github.com/goreleaser/goreleaser-action/commit/ec59f474b9834571250b370d4735c50f8e2d1e29) |
 | v7.2.2 | [`v7.2.2`](https://github.com/chainguard-actions/goreleaser-goreleaser-action/tree/v7.2.2) | [`5daf1e9`](https://github.com/goreleaser/goreleaser-action/commit/5daf1e915a5f0af01ddbcd89a43b8061ff4f1a89) |
 | v7.2.3 | [`v7.2.3`](https://github.com/chainguard-actions/goreleaser-goreleaser-action/tree/v7.2.3) | [`f06c13b`](https://github.com/goreleaser/goreleaser-action/commit/f06c13b6b1a9625abc9e6e439d9c05a8f2190e94) |
 
