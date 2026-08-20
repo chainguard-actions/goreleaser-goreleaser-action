@@ -1,0 +1,9 @@
+version: 2
+builds:
+  - id: hello
+    main: .
+    binary: hello
+    goos:
+      - linux
+    goarch:
+      - amd64

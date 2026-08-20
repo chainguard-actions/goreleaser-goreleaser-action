@@ -1,4 +1,4 @@
-name: Test install-only mode
+name: Test goreleaser check command
 on:
   workflow_dispatch:
 jobs:
@@ -19,16 +19,9 @@ jobs:
           distribution: 'goreleaser'
           version: '~> v2'
           install-only: 'true'
-      - name: Assert goreleaser binary is available
+      - name: Run goreleaser check manually using committed fixture
         run: |
-          echo "Checking goreleaser binary..."
-          if ! command -v goreleaser > /dev/null 2>&1; then
-            echo "FAIL: goreleaser binary not found on PATH"
-            exit 1
-          fi
-          echo "PASS: goreleaser found at $(command -v goreleaser)"
-      - name: Assert goreleaser version output
-        run: |
-          echo "Checking goreleaser version..."
-          goreleaser --version
-          echo "PASS: goreleaser --version succeeded"
+          echo "Running goreleaser check..."
+          cd "$GITHUB_WORKSPACE/tests/fixtures/goproject"
+          goreleaser check --config .goreleaser.yaml
+          echo "PASS: goreleaser check succeeded"

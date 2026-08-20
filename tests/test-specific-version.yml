@@ -1,4 +1,4 @@
-name: Test install-only mode
+name: Test specific version installation
 on:
   workflow_dispatch:
 jobs:
@@ -17,7 +17,7 @@ jobs:
         uses: .
         with:
           distribution: 'goreleaser'
-          version: '~> v2'
+          version: 'v2.4.8'
           install-only: 'true'
       - name: Assert goreleaser binary is available
         run: |
@@ -27,8 +27,13 @@ jobs:
             exit 1
           fi
           echo "PASS: goreleaser found at $(command -v goreleaser)"
-      - name: Assert goreleaser version output
+      - name: Assert goreleaser version matches requested
         run: |
-          echo "Checking goreleaser version..."
-          goreleaser --version
-          echo "PASS: goreleaser --version succeeded"
+          VERSION_OUTPUT=$(goreleaser --version 2>&1)
+          echo "Version output: $VERSION_OUTPUT"
+          if echo "$VERSION_OUTPUT" | grep -q "2.4.8"; then
+            echo "PASS: goreleaser version 2.4.8 confirmed"
+          else
+            echo "FAIL: expected version 2.4.8 in output"
+            exit 1
+          fi

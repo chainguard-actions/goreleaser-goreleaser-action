@@ -1,0 +1,25 @@
+name: Test workdir input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      RUNNER_TOOL_CACHE: /tmp/runner-tool-cache
+      RUNNER_TEMP: /tmp/runner-temp
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Prepare tool cache and temp directories
+        run: |
+          mkdir -p /tmp/runner-tool-cache
+          mkdir -p /tmp/runner-temp
+      - id: action
+        uses: .
+        with:
+          distribution: 'goreleaser'
+          version: '~> v2'
+          args: 'check'
+          workdir: 'tests/fixtures/workdir-project'
+      - name: Assert goreleaser check succeeded in workdir
+        run: |
+          echo "PASS: goreleaser check ran successfully in workdir"
