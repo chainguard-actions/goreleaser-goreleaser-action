@@ -1,0 +1,56 @@
+name: Test GoReleaser build snapshot
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set up Go
+        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version: '1.22'
+      - name: Create minimal Go project for GoReleaser
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/goreleaser-test"
+          cd "$GITHUB_WORKSPACE/goreleaser-test"
+          git init
+          git config user.email "test@example.com"
+          git config user.name "Test User"
+
+          printf 'module github.com/example/goreleaser-test\n\ngo 1.22\n' > go.mod
+
+          printf 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, GoReleaser!")\n}\n' > main.go
+
+          printf 'version: 2\nbuilds:\n  - id: test-binary\n    main: .\n    binary: goreleaser-test\n    goos:\n      - linux\n    goarch:\n      - amd64\n' > .goreleaser.yaml
+
+          git add .
+          git commit -m "initial commit"
+      - id: action
+        uses: .
+        with:
+          version: '~> v2'
+          args: 'build --snapshot --clean'
+          workdir: 'goreleaser-test'
+      - name: Assert artifacts output is set
+        env:
+          ARTIFACTS: ${{ steps.action.outputs.artifacts }}
+          METADATA: ${{ steps.action.outputs.metadata }}
+        run: |
+          echo "artifacts: $ARTIFACTS"
+          echo "metadata: $METADATA"
+          if [ -z "$ARTIFACTS" ]; then
+            echo "FAIL: artifacts output is empty"
+            exit 1
+          fi
+          echo "PASS: artifacts output is set"
+      - name: Assert metadata output is set
+        env:
+          METADATA: ${{ steps.action.outputs.metadata }}
+        run: |
+          echo "metadata: $METADATA"
+          if [ -z "$METADATA" ]; then
+            echo "FAIL: metadata output is empty"
+            exit 1
+          fi
+          echo "PASS: metadata output is set"

@@ -1,0 +1,32 @@
+name: Test GoReleaser version-file input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create .tool-versions file
+        run: |
+          printf 'goreleaser 2.5.0\n' > .tool-versions
+          cat .tool-versions
+      - id: action
+        uses: .
+        with:
+          version-file: '.tool-versions'
+          install-only: 'true'
+      - name: Assert GoReleaser installed from version-file
+        run: |
+          echo "Checking goreleaser binary..."
+          if ! command -v goreleaser >/dev/null 2>&1; then
+            echo "FAIL: goreleaser not found on PATH"
+            exit 1
+          fi
+          VERSION_OUTPUT="$(goreleaser --version 2>&1)"
+          echo "goreleaser version output: $VERSION_OUTPUT"
+          if echo "$VERSION_OUTPUT" | grep -q "2.5.0"; then
+            echo "PASS: goreleaser installed from .tool-versions with version 2.5.0"
+          else
+            echo "FAIL: expected version 2.5.0 from .tool-versions but got: $VERSION_OUTPUT"
+            exit 1
+          fi
